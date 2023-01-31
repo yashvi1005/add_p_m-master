@@ -7,17 +7,10 @@ import CheckBoxOutlinedIcon from "@mui/icons-material/CheckBoxOutlined";
 import { noteContext } from "../App";
 
 export const CustomActionCell = (props) => {
-  const {
-    open1,
-    setOpen1,
-    currentData,
-    setcurrentData,
-    currency,
-    setcurrency,
-    data,
-    setdata,
-  } = useContext(noteContext);
-  console.log(11, props);
+  const { open1, setOpen1, data, setdata, deletePackage, deleteItem } =
+    useContext(noteContext);
+
+  console.log("props", props);
 
   return (
     <div className={style["edit_delete"]}>
@@ -26,7 +19,7 @@ export const CustomActionCell = (props) => {
           <BorderColorOutlinedIcon
             onClick={() => {
               // setcurrentData(props.row);
-              setdata(props.row);
+              setdata(props?.row);
               setOpen1(true);
             }}
           />
@@ -35,7 +28,12 @@ export const CustomActionCell = (props) => {
 
       <span className={style["email"]}>
         <span className={style["email_icon"]}>
-          <DeleteOutlineOutlinedIcon sx={{ color: "#ea4335" }} />
+          <DeleteOutlineOutlinedIcon
+            sx={{ color: "#ea4335" }}
+            onClick={() => {
+              deleteItem(props?.row);
+            }}
+          />
         </span>
       </span>
     </div>
@@ -75,9 +73,11 @@ export const CustomPackagePrice = () => {
 };
 
 export const CustomDefaultPackageCell = () => {
+  const { deletePackage } = useContext(noteContext);
   return <CheckBoxOutlinedIcon sx={{ color: "green" }} />;
 };
 
-export const CustomDeleteIcon = () => {
-  return <DeleteOutlineOutlinedIcon sx={{ color: "red" }} />;
-};
+// export const CustomDeleteIcon = () => {
+//   const { deleteItem } = useContext(noteContext);
+//   return <DeleteOutlineOutlinedIcon sx={{ color: "red" }} />;
+// };

@@ -72,22 +72,29 @@ const columns = [
 ];
 
 const List = (props) => {
-  const { open1, setOpen1, currency, setcurrency, currentData, data, setdata } =
-    useContext(noteContext);
+  const {
+    open1,
+    setOpen1,
+    currency,
+    setcurrency,
+    data,
+    setdata,
+    dataArray,
+    setDataArray,
+  } = useContext(noteContext);
 
-  const deleteCurrency = (e, index) => {
-    // const newCurrency = currency.filter((currencyData) => {
-    //   return currencyData.id !== id;
-    // });
-    // setcurrency(newCurrency);
-
-    setcurrency((oldvalues) => {
-      return oldvalues.filter((_, i) => i, index);
+  const deleteCurrency = (data) => {
+    let filterData = currency.filter((cur) => {
+      return cur.id !== data.id;
     });
+    setcurrency(filterData);
+
+    // console.log("first", filterData);
   };
 
   const onCurrencyChange = (e, index) => {
     const array = [...currency];
+    // console.log(99, array[index]);
     array[index].packageCurrency = e.target.value;
     setcurrency(array);
   };
@@ -125,9 +132,25 @@ const List = (props) => {
     }
   };
 
-  const [dataArray, setDataArray] = useState([]);
   const saveData = (newData) => {
-    setDataArray([...dataArray, newData]);
+    console.log("newData", newData);
+    if (newData.id) {
+      //update
+      let currentIndex = dataArray.findIndex((e) => e.id === newData.id);
+
+      // let data = dataArray.find((e) => e.id === newData.id);
+      // setDataArray([...dataArray, data]);
+
+      console.log("data", data);
+      let arr = [...dataArray];
+      if (currentIndex > -1) {
+        arr[currentIndex] = newData;
+        setDataArray(arr);
+      }
+    } else {
+      console.log("dataArray", dataArray);
+      setDataArray([...dataArray, { ...newData, id: dataArray.length + 1 }]);
+    }
   };
   const onChange1 = (e) => {
     setdata({ ...data, [e.target.name]: e.target.value });
@@ -142,7 +165,7 @@ const List = (props) => {
     ) {
       alert("field is empty!!");
     } else {
-      saveData({ ...data, id: dataArray.length + 1 });
+      saveData(data);
       handleClose1();
       setdata(
         data.packagename === "" &&
@@ -260,11 +283,11 @@ const List = (props) => {
           </Popover>
           <Drawer anchor={"right"} open={open1} onClose={handleClose1}>
             <div style={{ margin: "20px" }}>
-              {console.log("269", data)}
               <Typography
                 variant="h6"
                 style={{ width: "600px", fontWeight: "bold" }}
               >
+                {data?.id ? "Update Package" : "Add New Package"}
                 Add New Package
               </Typography>
               <Divider sx={{ width: "600px", marginTop: "10px" }}></Divider>
@@ -449,7 +472,7 @@ const List = (props) => {
                               />
                               <span>
                                 <DeleteOutlineIcon
-                                  onClick={() => deleteCurrency(index)}
+                                  onClick={() => deleteCurrency(data)}
                                   sx={{
                                     color: "red",
                                     marginLeft: "5px",
@@ -464,15 +487,30 @@ const List = (props) => {
                     })}
                   </div>
                   <div>
-                    <Button
-                      onClick={handleCurrencySubmit}
-                      variant="contained"
-                      className={style["add_currency"]}
-                      disableRipple
-                    >
-                      Add Currency
-                    </Button>
-                    {/* )} */}
+                    {currency[currency.length - 1].price && (
+                      <Button
+                        onClick={handleCurrencySubmit}
+                        variant="contained"
+                        className={style["add_currency"]}
+                        disableRipple
+                      >
+                        Add Currency
+                      </Button>
+                    )}
+                    {/* {currency?.map((data) => {
+                      return data?.price ? (
+                        <Button
+                          onClick={handleCurrencySubmit}
+                          variant="contained"
+                          className={style["add_currency"]}
+                          disableRipple
+                        >
+                          Add Currency
+                        </Button>
+                      ) : (
+                        ""
+                      );
+                    })} */}
                   </div>
                 </form>
                 <p></p>
@@ -491,7 +529,7 @@ const List = (props) => {
                     Close
                   </Button>
                   <Button onClick={handleSubmit} className={style["add"]}>
-                    Add
+                    {data?.id ? "UPDATE" : "ADD"}
                   </Button>
                 </div>
               </form>
